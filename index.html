@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>আমার গ্রাম্য বাগান — Ad Locked Crops</title>
+  <style>
+    :root {
+      --bg-grass-dark: #1b5e20;
+      --panel-bg: rgba(18, 38, 22, 0.94);
+      --panel-border: #66bb6a;
+      --text-main: #f1f8e9;
+      --text-muted: #c8e6c9;
+      --gold: #ffca28;
+      --soil-raw: #6d4c41;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(circle at top, #388e3c, var(--bg-grass-dark));
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      touch-action: none;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 520px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 10px;
+      gap: 10px;
+    }
+
+    .top-bar {
+      background: var(--panel-bg);
+      border: 1.5px solid var(--panel-border);
+      border-radius: 14px;
+      padding: 10px 12px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .stat-box .label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .stat-box .value {
+      font-size: 15px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .gold { color: var(--gold); }
+    .fert-color { color: #a5d6a7; }
+
+    .xp-wrap {
+      grid-column: 1 / -1;
+      margin-top: 2px;
+    }
+
+    .xp-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.14);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .xp-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #81c784, #ffca28);
+      transition: width 0.25s ease;
+    }
+
+    .sub-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+    }
+
+    .status-pill {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 6px 10px;
+      border-radius: 999px;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mini-btn {
+      background: #2e7d32;
+      color: #fff;
+      border: 1px solid #81c784;
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .mini-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* 20 Plots Grid */
+    .farm-field {
+      background: #255d29;
+      border: 2px solid #81c784;
+      border-radius: 16px;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.35);
+      position: relative;
+    }
+
+    .plot {
+      aspect-ratio: 1 / 1;
+      border-radius: 12px;
+      background: var(--soil-raw);
+      border: 2px solid #4e342e;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: transform 0.12s ease, border-color 0.15s ease;
+    }
+
+    .plot.locked {
+      background: rgba(20, 35, 24, 0.72);
+      border: 2px dashed rgba(255, 255, 255, 0.22);
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 11px;
+    }
+
+    .plot.tilled {
+      background: repeating-linear-gradient(
+        0deg,
+        #5d4037,
+        #5d4037 5px,
+        #3e2723 5px,
+        #3e2723 8px
+      );
+      border-color: #8d6e63;
+    }
+
+    .plot.fertilized {
+      box-shadow: inset 0 0 0 2px rgba(129, 199, 132, 0.65);
+    }
+
+    .plot.ready {
+      border-color: #ffeb3b;
+      box-shadow: 0 0 10px rgba(255, 235, 59, 0.55);
+    }
+
+    .crop-icon {
+      line-height: 1.1;
+      z-index: 2;
+    }
+
+    .stage-seed {
+      font-size: 15px;
+      opacity: 0.9;
+    }
+
+    .stage-sprout {
+      font-size: 20px;
+    }
+
+    .stage-ready {
+      font-size: 27px;
+      animation: bounceReady 1.1s infinite ease-in-out;
+    }
+
+    @keyframes bounceReady {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-3px) scale(1.08); }
+    }
+
+    .fert-tag {
+      position: absolute;
+      top: 3px;
+      right: 4px;
+      font-size: 11px;
+      z-index: 3;
+    }
+
+    .timer-badge {
+      position: absolute;
+      bottom: 3px;
+      left: 3px;
+      right: 3px;
+      background: rgba(0, 0, 0, 0.72);
+      color: #fff;
+      font-size: 9.5px;
+      font-weight: 700;
+      text-align: center;
+      border-radius: 6px;
+      padding: 1px 2px;
+      z-index: 3;
+    }
+
+    .ready-badge {
+      background: rgba(255, 193, 7, 0.92);
+      color: #1b2618;
+    }
+
+    .float-gain {
+      position: fixed;
+      font-weight: 800;
+      font-size: 14px;
+      color: #ffeb3b;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.75);
+      pointer-events: none;
+      z-index: 60;
+      animation: floatUp 0.95s ease-out forwards;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translate(-50%, 0) scale(0.9); opacity: 1; }
+      100% { transform: translate(-50%, -36px) scale(1.08); opacity: 0; }
+    }
+
+    /* Bottom Controls */
+    .bottom-panel {
+      background: var(--panel-bg);
+      border: 1.5px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+      gap: 6px;
+    }
+
+    .section-title {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .buy-fert-btn {
+      background: rgba(255, 202, 40, 0.18);
+      border: 1px solid var(--gold);
+      color: #fff8e1;
+      border-radius: 7px;
+      padding: 4px 8px;
+      font-size: 10.5px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .buy-fert-btn:active {
+      transform: scale(0.96);
+    }
+
+    .tools-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .tool-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
+      color: var(--text-main);
+      border-radius: 12px;
+      padding: 8px 6px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    .tool-btn.active {
+      background: rgba(76, 175, 80, 0.34);
+      border-color: #a5d6a7;
+      box-shadow: 0 0 0 2px rgba(165, 214, 167, 0.25);
+    }
+
+    .seeds-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+    }
+
+    .seed-btn {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1.5px solid rgba(255, 255, 255, 0.18);
+      color: var(--text-main);
+      border-radius: 11px;
+      padding: 6px 3px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      cursor: pointer;
+      font-size: 11px;
+      position: relative;
+    }
+
+    .seed-btn.locked-ad {
+      border-color: #f48fb1;
+      background: rgba(233, 30, 99, 0.12);
+    }
+
+    .ad-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: #e91e63;
+      color: #fff;
+      font-size: 8.5px;
+      font-weight: 800;
+      padding: 1px 4px;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .stock-badge {
+      position: absolute;
+      top: -4px;
+      left: -4px;
+      background: #4caf50;
+      color: #fff;
+      font-size: 8.5px;
+      font-weight: 800;
+      padding: 1px 4px;
+      border-radius: 6px;
+    }
+
+    .seed-btn.active {
+      background: rgba(255, 202, 40, 0.22);
+      border-color: var(--gold);
+    }
+
+    .seed-emoji {
+      font-size: 18px;
+    }
+
+    .seed-name {
+      font-weight: 700;
+      font-size: 11px;
+    }
+
+    .seed-meta {
+      font-size: 8.5px;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.1;
+    }
+
+    /* Modal for Simulated Rewarded Ad */
+    .ad-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.88);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .ad-modal.open {
+      display: flex;
+    }
+
+    .ad-box {
+      background: #1b2e1e;
+      border: 2px solid #81c784;
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      max-width: 320px;
+      width: 100%;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+    }
+
+    .ad-box h3 {
+      margin: 0 0 8px 0;
+      color: #ffca28;
+      font-size: 17px;
+    }
+
+    .ad-box p {
+      font-size: 13px;
+      color: #c8e6c9;
+      margin: 0 0 16px 0;
+      line-height: 1.4;
+    }
+
+    .ad-timer-circle {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 3px solid #ffca28;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0 auto 16px auto;
+      color: #fff;
+    }
+
+    .ad-watch-btn {
+      background: #e91e63;
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 8px;
+    }
+
+    .ad-close-btn {
+      background: transparent;
+      color: #aaa;
+      border: 1px solid #555;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      cursor: pointer;
+    }
+
+    .toast {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 28, 18, 0.95);
+      color: #fff;
+      border: 1px solid #81c784;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      font-weight: 600;
+      z-index: 120;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="toast" id="toast"></div>
+
+  <!-- Simulated Ad Modal -->
+  <div class="ad-modal" id="adModal">
+    <div class="ad-box">
+      <h3 id="adModalTitle">প্রিমিয়াম ফসল আনলক</h3>
+      <p id="adModalDesc">একটি ভিডিও বিজ্ঞাপন দেখলে ৩টি স্পেশাল বীজ ফ্রিতে পাবেন!</p>
+      <div class="ad-timer-circle" id="adTimerCircle" style="display:none;">৫</div>
+      <button class="ad-watch-btn" id="watchAdBtn">📺 বিজ্ঞাপন দেখুন (+৩ বীজ)</button>
+      <button class="ad-close-btn" id="closeAdModalBtn">পরে দেখব</button>
+    </div>
+  </div>
+
+  <div class="app">
+    <!-- Top Stats -->
+    <div>
+      <div class="top-bar">
+        <div class="stat-box">
+          <div class="label">লেভেল</div>
+          <div class="value" id="levelVal">১</div>
+        </div>
+        <div class="stat-box">
+          <div class="label">কয়েন</div>
+          <div class="value gold" id="coinsVal">১০০</div>
+        </div>
+        <div class="stat-box">
+          <div class="label">সার আছে</div>
+          <div class="value fert-color" id="fertCountVal">১</div>
+        </div>
+        <div class="stat-box">
+          <div class="label">প্লট</div>
+          <div class="value" id="plotCountVal">৪ / ২০</div>
+        </div>
+        <div class="xp-wrap">
+          <div class="xp-bar-bg">
+            <div class="xp-bar-fill" id="xpBarFill"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-actions" style="margin-top: 8px;">
+        <div class="status-pill" id="hintText">কোদাল টেনে মাটি চাষ করুন</div>
+        <button class="mini-btn" id="ffBtn">+৫ মি. টেস্ট</button>
+        <button class="mini-btn" id="resetBtn">রিসেট</button>
+      </div>
+    </div>
+
+    <!-- 20 Plots Grid -->
+    <div class="farm-field" id="farmField"></div>
+
+    <!-- Tools & 5 Seeds -->
+    <div class="bottom-panel">
+      <div>
+        <div class="section-header">
+          <span class="section-title">যন্ত্রপাতি ও সার (বাকি সময় ৬০% কমায়)</span>
+          <button class="buy-fert-btn" id="buyFertBtn">+ সার কিনুন (১০০ 🪙)</button>
+        </div>
+        <div class="tools-row">
+          <button class="tool-btn active" id="toolKodali" data-mode="kodali">
+            <span>🪓</span>
+            <span>কোদাল</span>
+          </button>
+          <button class="tool-btn" id="toolFert" data-mode="fertilizer">
+            <span>🧪</span>
+            <span>সার দিন</span>
+          </button>
+          <button class="tool-btn" id="toolKachi" data-mode="kachi">
+            <span>✂️</span>
+            <span>কাঁচি</span>
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title">বীজ নির্বাচন (আলু ও গাজর পেতে অ্যাড দেখুন)</div>
+        <div class="seeds-row" id="seedsRow"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TOTAL_PLOTS = 20;
+    const INITIAL_PLOTS = 4;
+    const PLOTS_PER_LEVEL_UP = 2;
+    const FERTILIZER_PRICE = 100;
+    const STORAGE_KEY = "my_topdown_garden_v4";
+
+    // Regular crops vs Rewarded Ad-locked crops (Alu & Gajor)
+    const CROPS = [
+      { id: "dhan",  name: "ধান",   emoji: "🌾", minutes: 5,  cost: 10, reward: 25,  xp: 20, adLocked: false },
+      { id: "gom",   name: "গম",    emoji: "🌿", minutes: 5,  cost: 12, reward: 32,  
