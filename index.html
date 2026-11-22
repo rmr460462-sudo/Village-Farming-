@@ -7,7 +7,7 @@
   <style>
     :root {
       --bg-grass-dark: #1b5e20;
-      --panel-bg: rgba(18, 38, 22, 0.94);
+      --panel-bg: rgba(18, 38, 22, 0.95);
       --panel-border: #66bb6a;
       --text-main: #f1f8e9;
       --text-muted: #c8e6c9;
@@ -21,28 +21,29 @@
       user-select: none;
     }
 
-    body {
+    html, body {
       margin: 0;
       padding: 0;
+      width: 100%;
+      min-height: 100%;
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
       background: radial-gradient(circle at top, #388e3c, var(--bg-grass-dark));
       color: var(--text-main);
-      min-height: 100vh;
+    }
+
+    body {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      touch-action: none;
+      justify-content: center;
+      padding: 8px;
     }
 
     .app {
       width: 100%;
-      max-width: 520px;
-      min-height: 100vh;
+      max-width: 500px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      padding: 10px;
       gap: 10px;
+      padding-bottom: 16px;
     }
 
     .top-bar {
@@ -73,7 +74,7 @@
 
     .xp-wrap {
       grid-column: 1 / -1;
-      margin-top: 2px;
+      margin-top: 4px;
     }
 
     .xp-bar-bg {
@@ -125,22 +126,24 @@
       transform: scale(0.96);
     }
 
-    /* 20 Plots Grid */
+    /* 20 Plots Grid (5 x 4) */
     .farm-field {
+      width: 100%;
+      min-height: 240px;
       background: #255d29;
       border: 2px solid #81c784;
       border-radius: 16px;
       padding: 10px;
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 8px;
       box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.35);
-      position: relative;
     }
 
     .plot {
-      aspect-ratio: 1 / 1;
-      border-radius: 12px;
+      width: 100%;
+      height: 64px;
+      border-radius: 11px;
       background: var(--soil-raw);
       border: 2px solid #4e342e;
       position: relative;
@@ -149,14 +152,16 @@
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      transition: transform 0.12s ease, border-color 0.15s ease;
+      touch-action: none;
     }
 
     .plot.locked {
-      background: rgba(20, 35, 24, 0.72);
-      border: 2px dashed rgba(255, 255, 255, 0.22);
-      color: rgba(255, 255, 255, 0.6);
-      font-size: 11px;
+      background: rgba(20, 35, 24, 0.75);
+      border: 2px dashed rgba(255, 255, 255, 0.25);
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 10.5px;
+      line-height: 1.2;
+      text-align: center;
     }
 
     .plot.tilled {
@@ -171,7 +176,7 @@
     }
 
     .plot.fertilized {
-      box-shadow: inset 0 0 0 2px rgba(129, 199, 132, 0.65);
+      box-shadow: inset 0 0 0 2px rgba(129, 199, 132, 0.7);
     }
 
     .plot.ready {
@@ -184,50 +189,43 @@
       z-index: 2;
     }
 
-    .stage-seed {
-      font-size: 15px;
-      opacity: 0.9;
-    }
-
-    .stage-sprout {
-      font-size: 20px;
-    }
-
+    .stage-seed { font-size: 15px; opacity: 0.9; }
+    .stage-sprout { font-size: 20px; }
     .stage-ready {
-      font-size: 27px;
+      font-size: 25px;
       animation: bounceReady 1.1s infinite ease-in-out;
     }
 
     @keyframes bounceReady {
       0%, 100% { transform: translateY(0) scale(1); }
-      50% { transform: translateY(-3px) scale(1.08); }
+      50% { transform: translateY(-2px) scale(1.06); }
     }
 
     .fert-tag {
       position: absolute;
-      top: 3px;
-      right: 4px;
-      font-size: 11px;
+      top: 2px;
+      right: 3px;
+      font-size: 10px;
       z-index: 3;
     }
 
     .timer-badge {
       position: absolute;
-      bottom: 3px;
-      left: 3px;
-      right: 3px;
-      background: rgba(0, 0, 0, 0.72);
+      bottom: 2px;
+      left: 2px;
+      right: 2px;
+      background: rgba(0, 0, 0, 0.75);
       color: #fff;
-      font-size: 9.5px;
+      font-size: 9px;
       font-weight: 700;
       text-align: center;
-      border-radius: 6px;
+      border-radius: 5px;
       padding: 1px 2px;
       z-index: 3;
     }
 
     .ready-badge {
-      background: rgba(255, 193, 7, 0.92);
+      background: rgba(255, 193, 7, 0.94);
       color: #1b2618;
     }
 
@@ -249,6 +247,7 @@
 
     /* Bottom Controls */
     .bottom-panel {
+      width: 100%;
       background: var(--panel-bg);
       border: 1.5px solid var(--panel-border);
       border-radius: 16px;
@@ -262,7 +261,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
       gap: 6px;
     }
 
@@ -273,7 +272,7 @@
     }
 
     .buy-fert-btn {
-      background: rgba(255, 202, 40, 0.18);
+      background: rgba(255, 202, 40, 0.2);
       border: 1px solid var(--gold);
       color: #fff8e1;
       border-radius: 7px;
@@ -284,13 +283,9 @@
       white-space: nowrap;
     }
 
-    .buy-fert-btn:active {
-      transform: scale(0.96);
-    }
-
     .tools-row {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 6px;
     }
 
@@ -299,7 +294,7 @@
       border: 1.5px solid rgba(255, 255, 255, 0.2);
       color: var(--text-main);
       border-radius: 12px;
-      padding: 8px 6px;
+      padding: 9px 6px;
       font-size: 12px;
       font-weight: 700;
       display: flex;
@@ -310,15 +305,15 @@
     }
 
     .tool-btn.active {
-      background: rgba(76, 175, 80, 0.34);
+      background: rgba(76, 175, 80, 0.35);
       border-color: #a5d6a7;
-      box-shadow: 0 0 0 2px rgba(165, 214, 167, 0.25);
     }
 
     .seeds-row {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 6px;
+      margin-top: 6px;
     }
 
     .seed-btn {
@@ -326,7 +321,7 @@
       border: 1.5px solid rgba(255, 255, 255, 0.18);
       color: var(--text-main);
       border-radius: 11px;
-      padding: 6px 3px;
+      padding: 7px 3px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -338,56 +333,47 @@
 
     .seed-btn.locked-ad {
       border-color: #f48fb1;
-      background: rgba(233, 30, 99, 0.12);
+      background: rgba(233, 30, 99, 0.14);
     }
 
     .ad-badge {
       position: absolute;
-      top: -4px;
-      right: -4px;
+      top: -5px;
+      right: -3px;
       background: #e91e63;
       color: #fff;
-      font-size: 8.5px;
+      font-size: 8px;
       font-weight: 800;
       padding: 1px 4px;
       border-radius: 6px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
 
     .stock-badge {
       position: absolute;
-      top: -4px;
-      left: -4px;
+      top: -5px;
+      left: -3px;
       background: #4caf50;
       color: #fff;
-      font-size: 8.5px;
+      font-size: 8px;
       font-weight: 800;
       padding: 1px 4px;
       border-radius: 6px;
     }
 
     .seed-btn.active {
-      background: rgba(255, 202, 40, 0.22);
+      background: rgba(255, 202, 40, 0.24);
       border-color: var(--gold);
     }
 
-    .seed-emoji {
-      font-size: 18px;
-    }
-
-    .seed-name {
-      font-weight: 700;
-      font-size: 11px;
-    }
-
+    .seed-emoji { font-size: 18px; }
+    .seed-name { font-weight: 700; font-size: 11px; }
     .seed-meta {
       font-size: 8.5px;
       color: var(--text-muted);
       text-align: center;
-      line-height: 1.1;
+      line-height: 1.15;
     }
 
-    /* Modal for Simulated Rewarded Ad */
     .ad-modal {
       display: none;
       position: fixed;
@@ -399,9 +385,7 @@
       padding: 20px;
     }
 
-    .ad-modal.open {
-      display: flex;
-    }
+    .ad-modal.open { display: flex; }
 
     .ad-box {
       background: #1b2e1e;
@@ -411,7 +395,6 @@
       text-align: center;
       max-width: 320px;
       width: 100%;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
     }
 
     .ad-box h3 {
@@ -456,8 +439,8 @@
 
     .ad-close-btn {
       background: transparent;
-      color: #aaa;
-      border: 1px solid #555;
+      color: #ccc;
+      border: 1px solid #666;
       padding: 6px 14px;
       border-radius: 8px;
       font-size: 11.5px;
@@ -466,31 +449,32 @@
 
     .toast {
       position: fixed;
-      top: 16px;
+      top: 14px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(15, 28, 18, 0.95);
+      background: rgba(15, 28, 18, 0.96);
       color: #fff;
       border: 1px solid #81c784;
       padding: 8px 14px;
       border-radius: 999px;
-      font-size: 12.5px;
+      font-size: 12px;
       font-weight: 600;
       z-index: 120;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.2s ease;
+      max-width: 90%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .toast.show {
-      opacity: 1;
-    }
+    .toast.show { opacity: 1; }
   </style>
 </head>
 <body>
   <div class="toast" id="toast"></div>
 
-  <!-- Simulated Ad Modal -->
   <div class="ad-modal" id="adModal">
     <div class="ad-box">
       <h3 id="adModalTitle">প্রিমিয়াম ফসল আনলক</h3>
@@ -502,7 +486,6 @@
   </div>
 
   <div class="app">
-    <!-- Top Stats -->
     <div>
       <div class="top-bar">
         <div class="stat-box">
@@ -535,10 +518,8 @@
       </div>
     </div>
 
-    <!-- 20 Plots Grid -->
     <div class="farm-field" id="farmField"></div>
 
-    <!-- Tools & 5 Seeds -->
     <div class="bottom-panel">
       <div>
         <div class="section-header">
@@ -573,9 +554,562 @@
     const INITIAL_PLOTS = 4;
     const PLOTS_PER_LEVEL_UP = 2;
     const FERTILIZER_PRICE = 100;
-    const STORAGE_KEY = "my_topdown_garden_v4";
+    const STORAGE_KEY = "my_topdown_garden_v5";
 
-    // Regular crops vs Rewarded Ad-locked crops (Alu & Gajor)
     const CROPS = [
       { id: "dhan",  name: "ধান",   emoji: "🌾", minutes: 5,  cost: 10, reward: 25,  xp: 20, adLocked: false },
-      { id: "gom",   name: "গম",    emoji: "🌿", minutes: 5,  cost: 12, reward: 32,  
+      { id: "gom",   name: "গম",    emoji: "🌿", minutes: 5,  cost: 12, reward: 32,  xp: 22, adLocked: false },
+      { id: "vutta", name: "ভুট্টা", emoji: "🌽", minutes: 15, cost: 25, reward: 75,  xp: 45, adLocked: false },
+      { id: "alu",   name: "আলু",   emoji: "🥔", minutes: 20, cost: 0,  reward: 125, xp: 60, adLocked: true },
+      { id: "gajor", name: "গাজর",  emoji: "🥕", minutes: 30, cost: 0,  reward: 200, xp: 95, adLocked: true }
+    ];
+
+    function bnNum(n) {
+      const map = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"];
+      return String(n).replace(/\d/g, (d) => map[Number(d)]);
+    }
+
+    function getUnlockedPlotCount(level) {
+      return Math.min(TOTAL_PLOTS, INITIAL_PLOTS + (level - 1) * PLOTS_PER_LEVEL_UP);
+    }
+
+    function getXpNeededForLevel(level) {
+      return 60 + (level - 1) * 40;
+    }
+
+    function createDefaultState() {
+      const plots = Array.from({ length: TOTAL_PLOTS }, (_, idx) => ({
+        id: idx,
+        tilled: false,
+        cropId: null,
+        plantedAt: null,
+        durationMs: null,
+        fertilized: false
+      }));
+
+      return {
+        level: 1,
+        xp: 0,
+        coins: 100,
+        fertilizers: 1,
+        mode: "kodali",
+        selectedCropId: "dhan",
+        inventory: { alu: 0, gajor: 0 },
+        plots
+      };
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return createDefaultState();
+        const parsed = JSON.parse(raw);
+        const base = createDefaultState();
+        return {
+          ...base,
+          ...parsed,
+          inventory: { ...base.inventory, ...(parsed.inventory || {}) },
+          plots: Array.isArray(parsed.plots) && parsed.plots.length === TOTAL_PLOTS
+            ? parsed.plots
+            : base.plots
+        };
+      } catch {
+        return createDefaultState();
+      }
+    }
+
+    let state = loadState();
+    let isPointerDown = false;
+    let lastTouchedPlotIndex = null;
+    let toastTimer = null;
+    let audioCtx = null;
+    let pendingAdCropId = null;
+
+    const farmFieldEl = document.getElementById("farmField");
+    const seedsRowEl = document.getElementById("seedsRow");
+    const levelValEl = document.getElementById("levelVal");
+    const coinsValEl = document.getElementById("coinsVal");
+    const fertCountValEl = document.getElementById("fertCountVal");
+    const plotCountValEl = document.getElementById("plotCountVal");
+    const xpBarFillEl = document.getElementById("xpBarFill");
+    const hintTextEl = document.getElementById("hintText");
+    const toolKodaliBtn = document.getElementById("toolKodali");
+    const toolFertBtn = document.getElementById("toolFert");
+    const toolKachiBtn = document.getElementById("toolKachi");
+    const buyFertBtn = document.getElementById("buyFertBtn");
+    const toastEl = document.getElementById("toast");
+
+    const adModalEl = document.getElementById("adModal");
+    const adModalTitleEl = document.getElementById("adModalTitle");
+    const adModalDescEl = document.getElementById("adModalDesc");
+    const adTimerCircleEl = document.getElementById("adTimerCircle");
+    const watchAdBtnEl = document.getElementById("watchAdBtn");
+    const closeAdModalBtnEl = document.getElementById("closeAdModalBtn");
+
+    function playTone(freq = 520, duration = 0.11, type = "sine") {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        if (!audioCtx) audioCtx = new AudioContext();
+        if (audioCtx.state === "suspended") audioCtx.resume();
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch {}
+    }
+
+    function showToast(msg) {
+      toastEl.textContent = msg;
+      toastEl.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toastEl.classList.remove("show"), 1800);
+    }
+
+    function spawnFloatingText(text, x, y) {
+      const el = document.createElement("div");
+      el.className = "float-gain";
+      el.textContent = text;
+      el.style.left = `${x}px`;
+      el.style.top = `${y}px`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 950);
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch {}
+    }
+
+    function getCropById(id) {
+      return CROPS.find((c) => c.id === id) || CROPS[0];
+    }
+
+    function getCropProgress(plot, now = Date.now()) {
+      if (!plot.cropId || !plot.plantedAt || !plot.durationMs) return null;
+      const elapsed = Math.max(0, now - plot.plantedAt);
+      const ratio = Math.min(1, elapsed / plot.durationMs);
+      const remainingMs = Math.max(0, plot.durationMs - elapsed);
+      return { ratio, remainingMs, ready: ratio >= 1 };
+    }
+
+    function formatRemaining(ms) {
+      const totalSec = Math.ceil(ms / 1000);
+      const mins = Math.floor(totalSec / 60);
+      const secs = totalSec % 60;
+      if (mins > 0) {
+        return `${bnNum(mins)}মি ${bnNum(secs)}সে`;
+      }
+      return `${bnNum(secs)}সে`;
+    }
+
+    function addXpAndCheckLevelUp(amount) {
+      state.xp += amount;
+      let leveledUp = false;
+
+      while (state.level < 9) {
+        const needed = getXpNeededForLevel(state.level);
+        if (state.xp >= needed) {
+          state.xp -= needed;
+          state.level += 1;
+          leveledUp = true;
+        } else {
+          break;
+        }
+      }
+
+      if (leveledUp) {
+        const unlockedNow = getUnlockedPlotCount(state.level);
+        playTone(760, 0.22, "triangle");
+        showToast(`লেভেল ${bnNum(state.level)}! মোট ${bnNum(unlockedNow)}টি প্লট খুলেছে`);
+      }
+    }
+
+    function buyFertilizer() {
+      if (state.coins < FERTILIZER_PRICE) {
+        showToast(`সার কিনতে ${bnNum(FERTILIZER_PRICE)} কয়েন লাগবে`);
+        return;
+      }
+      state.coins -= FERTILIZER_PRICE;
+      state.fertilizers += 1;
+      playTone(620, 0.12, "sine");
+      saveState();
+      renderAll();
+      showToast("১টি সার কেনা হয়েছে (-১০০ 🪙)");
+    }
+
+    function openAdModalForCrop(cropId) {
+      pendingAdCropId = cropId;
+      const crop = getCropById(cropId);
+      adModalTitleEl.textContent = `${crop.name} বীজ আনলক`;
+      adModalDescEl.textContent = `একটি ভিডিও বিজ্ঞাপন দেখলে ৩টি ${crop.name} বীজ ফ্রিতে পাবেন!`;
+      adTimerCircleEl.style.display = "none";
+      watchAdBtnEl.style.display = "block";
+      closeAdModalBtnEl.style.display = "inline-block";
+      adModalEl.classList.add("open");
+    }
+
+    function simulateRewardedAdWatch() {
+      watchAdBtnEl.style.display = "none";
+      closeAdModalBtnEl.style.display = "none";
+      adTimerCircleEl.style.display = "flex";
+
+      let countdown = 5;
+      adTimerCircleEl.textContent = bnNum(countdown);
+
+      const interval = setInterval(() => {
+        countdown -= 1;
+        if (countdown > 0) {
+          adTimerCircleEl.textContent = bnNum(countdown);
+        } else {
+          clearInterval(interval);
+          adModalEl.classList.remove("open");
+
+          if (pendingAdCropId) {
+            state.inventory[pendingAdCropId] = (state.inventory[pendingAdCropId] || 0) + 3;
+            const crop = getCropById(pendingAdCropId);
+            playTone(880, 0.25, "triangle");
+            showToast(`৩টি ${crop.name}-এর বীজ পেয়েছেন!`);
+            setMode("seed", pendingAdCropId);
+            saveState();
+            renderAll();
+          }
+        }
+      }, 1000);
+    }
+
+    function setMode(newMode, cropId = null) {
+      state.mode = newMode;
+      if (cropId) state.selectedCropId = cropId;
+
+      toolKodaliBtn.classList.toggle("active", state.mode === "kodali");
+      toolFertBtn.classList.toggle("active", state.mode === "fertilizer");
+      toolKachiBtn.classList.toggle("active", state.mode === "kachi");
+
+      document.querySelectorAll(".seed-btn").forEach((btn) => {
+        btn.classList.toggle("active", state.mode === "seed" && btn.dataset.cropId === state.selectedCropId);
+      });
+
+      if (state.mode === "kodali") {
+        hintTextEl.textContent = "কোদাল টেনে আনলকড প্লট চাষ করুন";
+      } else if (state.mode === "fertilizer") {
+        hintTextEl.textContent = "বাড়ন্ত গাছে সার দিলে বাকি সময় ৬০% কমে যাবে";
+      } else if (state.mode === "kachi") {
+        hintTextEl.textContent = "কাঁচি দিয়ে পাকা ফসল কেটে কয়েন নিন";
+      } else {
+        const crop = getCropById(state.selectedCropId);
+        if (crop.adLocked) {
+          const count = state.inventory[crop.id] || 0;
+          hintTextEl.textContent = `${crop.name} (স্টক: ${bnNum(count)}) — কাটলে +${bnNum(crop.reward)}🪙`;
+        } else {
+          hintTextEl.textContent = `${crop.name}: লাগাতে ${bnNum(crop.cost)}🪙, কাটলে +${bnNum(crop.reward)}🪙`;
+        }
+      }
+      saveState();
+    }
+
+    function applyActionToPlot(index, isDragMove = false, clientX = 0, clientY = 0) {
+      const plot = state.plots[index];
+      if (!plot) return;
+      const unlockedCount = getUnlockedPlotCount(state.level);
+
+      if (index >= unlockedCount) {
+        if (!isDragMove) {
+          const neededLevelForPlot = Math.ceil((index + 1 - INITIAL_PLOTS) / PLOTS_PER_LEVEL_UP) + 1;
+          showToast(`এই প্লটটি লেভেল ${bnNum(neededLevelForPlot)}-এ খুলবে`);
+        }
+        return;
+      }
+
+      if (state.mode === "kodali") {
+        if (!plot.tilled) {
+          plot.tilled = true;
+          playTone(220, 0.08, "triangle");
+          saveState();
+          renderPlots();
+        }
+        return;
+      }
+
+      if (state.mode === "fertilizer") {
+        const prog = getCropProgress(plot);
+        if (!plot.cropId || !prog || prog.ready) {
+          if (!isDragMove) showToast("শুধু বাড়ন্ত গাছে সার দেওয়া যাবে");
+          return;
+        }
+        if (plot.fertilized) {
+          if (!isDragMove) showToast("এই গাছে ইতিমধ্যে সার দেওয়া হয়েছে");
+          return;
+        }
+        if (state.fertilizers <= 0) {
+          if (!isDragMove) showToast("সার শেষ! ১০০ কয়েনে সার কিনুন");
+          return;
+        }
+
+        const now = Date.now();
+        const elapsed = Math.max(0, now - plot.plantedAt);
+        const newRemaining = Math.floor(prog.remainingMs * 0.4);
+        plot.durationMs = elapsed + newRemaining;
+        plot.fertilized = true;
+        state.fertilizers -= 1;
+
+        playTone(680, 0.14, "sine");
+        if (clientX && clientY) spawnFloatingText("⚡ ৬০% সময় কমলো!", clientX, clientY);
+        saveState();
+        renderAll();
+        return;
+      }
+
+      if (state.mode === "kachi") {
+        const progress = getCropProgress(plot);
+        if (progress && progress.ready) {
+          const crop = getCropById(plot.cropId);
+          state.coins += crop.reward;
+          addXpAndCheckLevelUp(crop.xp);
+
+          plot.cropId = null;
+          plot.plantedAt = null;
+          plot.durationMs = null;
+          plot.fertilized = false;
+          plot.tilled = true;
+
+          playTone(820, 0.15, "sine");
+          if (clientX && clientY) spawnFloatingText(`+${bnNum(crop.reward)} 🪙`, clientX, clientY);
+          showToast(`${crop.name} কেটে +${bnNum(crop.reward)} কয়েন!`);
+          saveState();
+          renderAll();
+        }
+        return;
+      }
+
+      if (state.mode === "seed") {
+        if (!plot.tilled) {
+          if (!isDragMove) showToast("আগে কোদাল দিয়ে মাটি চাষ করুন!");
+          return;
+        }
+        if (plot.cropId) {
+          if (!isDragMove) showToast("এই প্লটে ইতিমধ্যে ফসল লাগানো আছে");
+          return;
+        }
+
+        const crop = getCropById(state.selectedCropId);
+
+        if (crop.adLocked) {
+          const availableCount = state.inventory[crop.id] || 0;
+          if (availableCount <= 0) {
+            if (!isDragMove) openAdModalForCrop(crop.id);
+            return;
+          }
+          state.inventory[crop.id] -= 1;
+        } else {
+          if (state.coins < crop.cost) {
+            if (!isDragMove) showToast(`${crop.name}-এর বীজ কিনতে ${bnNum(crop.cost)} কয়েন লাগবে`);
+            return;
+          }
+          state.coins -= crop.cost;
+        }
+
+        plot.cropId = crop.id;
+        plot.plantedAt = Date.now();
+        plot.durationMs = crop.minutes * 60 * 1000;
+        plot.fertilized = false;
+
+        playTone(460, 0.09, "triangle");
+        saveState();
+        renderAll();
+      }
+    }
+
+    function renderSeeds() {
+      seedsRowEl.innerHTML = "";
+      CROPS.forEach((crop) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "seed-btn";
+        btn.dataset.cropId = crop.id;
+
+        if (crop.adLocked) btn.classList.add("locked-ad");
+        if (state.mode === "seed" && state.selectedCropId === crop.id) {
+          btn.classList.add("active");
+        }
+
+        let badges = "";
+        let metaText = "";
+
+        if (crop.adLocked) {
+          const count = state.inventory[crop.id] || 0;
+          badges += `<span class="ad-badge">📺 Ad</span>`;
+          if (count > 0) badges += `<span class="stock-badge">${bnNum(count)}</span>`;
+          metaText = `${bnNum(crop.minutes)}মি · +${bnNum(crop.reward)}🪙`;
+        } else {
+          metaText = `${bnNum(crop.minutes)}মি · ${bnNum(crop.cost)}🪙`;
+        }
+
+        btn.innerHTML = `
+          ${badges}
+          <span class="seed-emoji">${crop.emoji}</span>
+          <span class="seed-name">${crop.name}</span>
+          <span class="seed-meta">${metaText}</span>
+        `;
+
+        btn.addEventListener("click", () => {
+          if (crop.adLocked && (state.inventory[crop.id] || 0) <= 0) {
+            openAdModalForCrop(crop.id);
+          } else {
+            setMode("seed", crop.id);
+          }
+        });
+
+        seedsRowEl.appendChild(btn);
+      });
+    }
+
+    function renderPlots() {
+      const unlockedCount = getUnlockedPlotCount(state.level);
+      const now = Date.now();
+      farmFieldEl.innerHTML = "";
+
+      for (let idx = 0; idx < TOTAL_PLOTS; idx += 1) {
+        const plot = state.plots[idx];
+        const div = document.createElement("div");
+        div.className = "plot";
+        div.dataset.index = String(idx);
+
+        if (idx >= unlockedCount) {
+          div.classList.add("locked");
+          div.innerHTML = `🔒<br>প্লট ${bnNum(idx + 1)}`;
+          farmFieldEl.appendChild(div);
+          continue;
+        }
+
+        if (plot.tilled) div.classList.add("tilled");
+        if (plot.fertilized) div.classList.add("fertilized");
+
+        if (plot.cropId) {
+          const crop = getCropById(plot.cropId);
+          const prog = getCropProgress(plot, now);
+          const fertBadge = plot.fertilized ? `<span class="fert-tag">🧪</span>` : "";
+
+          if (prog && prog.ready) {
+            div.classList.add("ready");
+            div.innerHTML = `
+              ${fertBadge}
+              <span class="crop-icon stage-ready">${crop.emoji}</span>
+              <div class="timer-badge ready-badge">+${bnNum(crop.reward)}🪙</div>
+            `;
+          } else if (prog) {
+            const stageClass = prog.ratio < 0.45 ? "stage-seed" : "stage-sprout";
+            const displayIcon = prog.ratio < 0.45 ? "🌱" : crop.emoji;
+            div.innerHTML = `
+              ${fertBadge}
+              <span class="crop-icon ${stageClass}">${displayIcon}</span>
+              <div class="timer-badge">${formatRemaining(prog.remainingMs)}</div>
+            `;
+          }
+        } else if (!plot.tilled) {
+          div.innerHTML = `<span style="font-size:10px;opacity:0.75;">খালি</span>`;
+        }
+
+        farmFieldEl.appendChild(div);
+      }
+    }
+
+    function renderHud() {
+      const unlockedCount = getUnlockedPlotCount(state.level);
+      const xpNeeded = getXpNeededForLevel(state.level);
+      const xpPct = state.level >= 9 ? 100 : Math.min(100, Math.round((state.xp / xpNeeded) * 100));
+
+      levelValEl.textContent = bnNum(state.level);
+      coinsValEl.textContent = bnNum(state.coins);
+      fertCountValEl.textContent = bnNum(state.fertilizers);
+      plotCountValEl.textContent = `${bnNum(unlockedCount)} / ${bnNum(TOTAL_PLOTS)}`;
+      xpBarFillEl.style.width = `${xpPct}%`;
+    }
+
+    function renderAll() {
+      renderHud();
+      renderSeeds();
+      renderPlots();
+    }
+
+    function getPlotIndexFromPoint(clientX, clientY) {
+      const el = document.elementFromPoint(clientX, clientY);
+      if (!el) return null;
+      const plotEl = el.closest(".plot");
+      if (!plotEl || !plotEl.dataset.index) return null;
+      return Number(plotEl.dataset.index);
+    }
+
+    farmFieldEl.addEventListener("pointerdown", (e) => {
+      const idx = getPlotIndexFromPoint(e.clientX, e.clientY);
+      if (idx === null) return;
+      isPointerDown = true;
+      lastTouchedPlotIndex = idx;
+      applyActionToPlot(idx, false, e.clientX, e.clientY);
+    });
+
+    window.addEventListener("pointermove", (e) => {
+      if (!isPointerDown) return;
+      const idx = getPlotIndexFromPoint(e.clientX, e.clientY);
+      if (idx !== null && idx !== lastTouchedPlotIndex) {
+        lastTouchedPlotIndex = idx;
+        applyActionToPlot(idx, true, e.clientX, e.clientY);
+      }
+    });
+
+    window.addEventListener("pointerup", () => {
+      isPointerDown = false;
+      lastTouchedPlotIndex = null;
+    });
+
+    toolKodaliBtn.addEventListener("click", () => setMode("kodali"));
+    toolFertBtn.addEventListener("click", () => setMode("fertilizer"));
+    toolKachiBtn.addEventListener("click", () => setMode("kachi"));
+    buyFertBtn.addEventListener("click", buyFertilizer);
+
+    watchAdBtnEl.addEventListener("click", simulateRewardedAdWatch);
+    closeAdModalBtnEl.addEventListener("click", () => adModalEl.classList.remove("open"));
+
+    document.getElementById("ffBtn").addEventListener("click", () => {
+      const fiveMinMs = 5 * 60 * 1000;
+      let affected = 0;
+      state.plots.forEach((p) => {
+        if (p.cropId && p.plantedAt) {
+          p.plantedAt -= fiveMinMs;
+          affected += 1;
+        }
+      });
+      saveState();
+      renderPlots();
+      showToast(affected > 0 ? "ফসলের সময় ৫ মিনিট এগানো হয়েছে" : "এগানোর মতো ফসল লাগানো নেই");
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      if (confirm("সব ডেটা রিসেট করে নতুনভাবে শুরু করতে চান?")) {
+        state = createDefaultState();
+        saveState();
+        setMode("kodali");
+        renderAll();
+        showToast("গেম নতুনভাবে শুরু হয়েছে");
+      }
+    });
+
+    setInterval(() => {
+      const hasGrowing = state.plots.some((p) => p.cropId && p.plantedAt);
+      if (hasGrowing) renderPlots();
+    }, 1000);
+
+    setMode(state.mode, state.selectedCropId);
+    renderAll();
+  </script>
+</body>
+</html>
